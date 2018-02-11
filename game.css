@@ -1,0 +1,10 @@
+#myCanvas {
+  /* position: absolute; */
+}
+
+.canvas-flex {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 600px;
+}
