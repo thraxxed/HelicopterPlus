@@ -87,33 +87,44 @@ var cartDy = 0;
 
 var trackHeight = 180;
 
+var pitfallOneTrigger = false;
+
+var trackTwoTrigger = false;
+
 function drawTracks() {
+  console.log(trackHeight);
   ctx.beginPath();
   ctx.fillStyle = "#000000";
   ctx.rect(trackOneStartPos -= scrollSpeed, 200, canvas.width, 20);
-  if (trackOneStartPos + 480 < 120) {
+  if (trackOneStartPos + 480 < 120 && !pitfallOneTrigger) {
+    pitfallOneTrigger = true;
     midair = true;
-    console.log("You can fall!");
     trackHeight = 600;
   }
   ctx.rect(trackTwoStartPos -= scrollSpeed, 200, canvas.width * 3, 20);
-  if (trackTwoStartPos - scrollSpeed < 120) trackHeight = 180;
+  if (trackTwoStartPos < 145 && !trackTwoTrigger) {
+    trackTwoTrigger = true;
+    trackHeight = 180;
+  }
   ctx.rect(trackThreeStartPos -= scrollSpeed, 200, canvas.width * 3, 20);
   ctx.fill();
   ctx.closePath();
 }
 
 function drawCart() {
-  if (midair) cartDy += 0.5;
+  if (midair) {
+    cartDy += 0.5;
+  }
   ctx.beginPath();
   ctx.fillStyle = "FF0000";
   cartY += cartDy;
-  if (cartY >= trackHeight) {
+  if (cartY > trackHeight) {
     midair = false;
     cartY = 180;
   }
   if (cartY > canvas.height) {
     clearInterval(renderLoop);
+    ctx.fillText("GAME OVER", 220, 150);
   }
   ctx.rect(cartX, cartY, 30, 20);
   ctx.fill();
@@ -130,7 +141,6 @@ function jump() {
   if (!midair) {
     midair = true;
     cartDy = -13;
-    console.log("jump!");
   }
 }
 

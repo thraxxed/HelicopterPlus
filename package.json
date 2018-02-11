@@ -1,7 +1,7 @@
 {
   "name": "javascript",
   "version": "1.0.0",
-  "description": "",
+  "description": "javascript project",
   "main": "game.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,5 +15,14 @@
     "babel-loader": "^7.1.2",
     "babel-preset-es2015": "^6.24.1",
     "webpack": "^3.11.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thraxxed/javascript.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thraxxed/javascript/issues"
+  },
+  "homepage": "https://github.com/thraxxed/javascript#readme"
 }
