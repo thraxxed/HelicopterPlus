@@ -1,7 +1,7 @@
 # Minecart Madness
 ## Background and Overview
 Minecart Madness is a 2d side-scrolling game where the player controls a character riding in a mine cart
-traveling across tracks (Think Donkey Kong Country).
+traveling across tracks (think Donkey Kong Country).
 
 The player automatically scrolls horizontally along the tracks.  They must jump and manuever to avoid obstacles and enemies.  
 
