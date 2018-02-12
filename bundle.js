@@ -74,34 +74,43 @@ var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
 var scrollSpeed = 2;
+
 var trackOneStartPos = 100;
 var trackTwoStartPos = 660;
 var trackThreeStartPos = 1700;
 
-var midair = false;
+var trackOneWidth = 350;
 
 var cartX = 120;
 var cartY = 180;
 
 var cartDy = 0;
 
+var midair = false;
+
 var trackHeight = 180;
 
 var pitfallOneTrigger = false;
-
 var trackTwoTrigger = false;
+
+function drawTrackOne() {
+  ctx.beginPath();
+  ctx.rect(trackOneStartPos -= scrollSpeed, 200, trackOneWidth, 10);
+  if (trackOneStartPos + trackOneWidth < 120 && !pitfallOneTrigger) {
+    pitfallOneTrigger = true;
+    midair = true;
+    trackHeight = 600;
+  }
+}
 
 function drawTracks() {
   console.log(trackHeight);
   ctx.beginPath();
   ctx.fillStyle = "#000000";
-  ctx.rect(trackOneStartPos -= scrollSpeed, 200, canvas.width, 20);
-  if (trackOneStartPos + 480 < 120 && !pitfallOneTrigger) {
-    pitfallOneTrigger = true;
-    midair = true;
-    trackHeight = 600;
-  }
-  ctx.rect(trackTwoStartPos -= scrollSpeed, 200, canvas.width * 3, 20);
+  drawTrackOne();
+  // ctx.rect(trackOneStartPos -= scrollSpeed, 200, canvas.width, 20);
+
+  // ctx.rect(trackTwoStartPos -= scrollSpeed, 200, canvas.width*3, 20)
   if (trackTwoStartPos < 145 && !trackTwoTrigger) {
     trackTwoTrigger = true;
     trackHeight = 180;
@@ -122,10 +131,7 @@ function drawCart() {
     midair = false;
     cartY = 180;
   }
-  if (cartY > canvas.height) {
-    clearInterval(renderLoop);
-    ctx.fillText("GAME OVER", 220, 150);
-  }
+
   ctx.rect(cartX, cartY, 30, 20);
   ctx.fill();
   ctx.closePath();
@@ -135,6 +141,11 @@ function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawCart();
   drawTracks();
+
+  if (cartY > canvas.height) {
+    clearInterval(renderLoop);
+    ctx.fillText("GAME OVER", 220, 150);
+  }
 }
 
 function jump() {
