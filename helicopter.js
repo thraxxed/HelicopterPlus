@@ -3,7 +3,7 @@ let ctx = canvas.getContext("2d");
 
 // Load Assets
 
-const renderLoop = setInterval(draw, 10);
+let renderLoop = setInterval(draw, 10);
 const helicopter = new Image();
 helicopter.src = 'https://i.imgur.com/tuHHozj.gif';
 const background = new Image();
@@ -24,7 +24,7 @@ const scrollSpeed = 1.8;
 const gravity = 200;
 const acceleration = -2.2;
 const maxVelocity = 3;
-const minVelocity = -1;
+const minVelocity = -1.5;
 
 let playerX = playerStartX;
 let playerY = playerStartY;
@@ -38,15 +38,16 @@ let obstacleHeight = canvas.height * 0.675;
 let gameOver = false;
 
 function setupGame() {
+  console.log("hey");
   playerX = playerStartX;
   playerY = playerStartY;
   velocityY = 1;
   canAccelerate = true;
   points = 0;
   obstacleX = canvas.width;
-  obstacleWidth = 70;
+  obstacleWidth = 50;
   obstacleOffset = (Math.random() * canvas.height * 1.25)
-  obstacleHeight = canvas.height * 0.625;
+  obstacleHeight = canvas.height * 0.675;
   gameOver = false;
 }
 
@@ -105,18 +106,27 @@ function drawObstacles() {
   if (xCollision && yCollision) {
     clearInterval(renderLoop);
     ctx.drawImage(dead, playerX, playerY, 50, 31.25);
-    ctx.font = "58px Comic Sans"
-    ctx.fillStyle = 'red';
-    ctx.fillText("GAME OVER", 70, 150);
+    gameOverFn();
     gameOver = true;
   }
   xCollision = false;
   yCollision = false;
 }
 
+function gameOverFn() {
+  ctx.font = "58px Comic Sans"
+  ctx.fillStyle = 'red';
+  ctx.fillText("GAME OVER", 70, 150);
+  ctx.font = "28px Comic Sans"
+  ctx.fillText("Press Space to Try Again", 95, 180);
+}
+
 function keyDownHandler(e) {
   if (e.keyCode === 32) {
-    gameStarted = true;
+    if (!gameStarted) gameStarted = true;
+    if (gameOver) {
+      setTimeout (() => location.reload(true), 1000);
+    }
     e.preventDefault();
     if (canAccelerate && velocityY > minVelocity) velocityY += acceleration;
   }
@@ -125,17 +135,18 @@ function keyDownHandler(e) {
 function drawPoints() {
   ctx.font = "18px Comic Sans"
   ctx.fillStyle = 'black';
-  ctx.fillText(`Score: ${Math.round(points)}`, 410, 20);
+  ctx.fillText(`Score: ${Math.round(points)}`, 380, 20);
 }
 
 function checkGameOver() {
   if (playerY > canvas.height + 31.25) {
     ctx.drawImage(dead, playerX, playerY, 50, 31.25);
     clearInterval(renderLoop);
-    ctx.font = "58px Comic Sans"
-    ctx.fillStyle = 'red';
-    ctx.fillText("GAME OVER", 70, 150);
+    gameOverFn();
     gameOver = true;
+    gameStarted = false;
+    // setupGame();
+    draw();
   }
 }
 
@@ -148,8 +159,6 @@ function draw() {
   drawObstacles();
   checkGameOver();
   points += 0.02;
-
-  // console.log(velocityY);
 }
 
 let gameStarted = false;

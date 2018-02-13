@@ -11,8 +11,12 @@
 <body>
 <div class="canvas-flex">
   <canvas id="myCanvas" width="480" height="320"></canvas>
+  <button id="mute" onClick="document.getElementById('music').muted = !document.getElementById('music').muted;">
+    <span id="mute-text">Mute Audio</span>
+  </button>
 </div>
 <link rel="stylesheet" type="text/css" href="game.css">
+<audio id="music" src="music.mp3" autoPlay loop></audio>
 <script src="bundle.js"></script>
 
 

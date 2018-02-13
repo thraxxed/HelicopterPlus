@@ -1,10 +1,20 @@
 #myCanvas {
   /* position: absolute; */
+  /* margin-top: 20%; */
 }
 
 .canvas-flex {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   height: 600px;
+  margin-top: 5%;
+
+}
+
+#mute {
+  margin-left: 35%;
+  margin-top: 2%;
+  width: 7%;
+  height: 4%;
 }
