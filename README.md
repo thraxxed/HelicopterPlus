@@ -1,18 +1,20 @@
-# Minecart Madness
+# Helicopter +
 ## Background and Overview
-Minecart Madness is a 2d side-scrolling game where the player controls a character riding in a mine cart
-traveling across tracks (think Donkey Kong Country).
+Helicopter Plus is a 2-dimensional sidescrolling game in which the player controls a helicopter, initially in
+free-fall, which may only be moved vertically, by pressing the space bar to activate positive upward acceleration.
 
-The player automatically scrolls horizontally along the tracks.  They must jump and manuever to avoid obstacles and enemies.  
+The player must avoid randomly positioned obstacles and enemies, and may collect items for bonus points, and potentially
+power-ups.
+
 
 ## Functionality and MVP
 
-In Minecart Mayhem, users will be able to:
+In Helicopter Plus, users will be able to:
 
+* Manuever their character with slick/semi-realistic controls.
 * Collect items which reward points
 * Avoid enemies and obstacles
-* Jump
-* Enjoy a curated soundtrack and visuals
+* Accumulate points by surviving longer, and view local high scores
 
 ## Technologies
 
@@ -25,34 +27,34 @@ This project will be implemented with the following technologies:
 
 ## Wireframes
 
-![wireframe](https://i.imgur.com/mjWR7Rp.png)
+![wireframe](https://i.imgur.com/y5tVRBC.png)
 
 ## Implementation Timeline
 
-### Over the weekend:
-* Render Canvas Element onto the screen
-* Player character scrolls along moving tracks
-* Can Jump
-* Basic collision detection
-* Game over text and end of render loop when player falls out of the screen
-
 ### Day 1:
-* Refactor for ease of scalability
-* Flesh out the level
+* Render Canvas Element onto Screen
+* Player Character begins in free-fall, accelerating
+* User may press the space bar to activate positive upward acceleration
+* Obstacles appear from right edge of screen infinitely, with randomally generated vertical offset
+* 90% working collision detection
+* Game over when colliding with obstacle or falling through bottom of screen
 
 ### Day 2:
-* Add enemies
+* Improve collision detection and spawn placement of obstacles.
 * Add items which reward points
+* Add other obstacle types (small enemy that moves up and down)
 
 ### Day 3:
+* Continue Day 2 items if incomplete
 * Overhaul graphics
 * Add music
+* General polish, style part of the page that isnt the canvas element
 
 ### Day 4:
 * Account for if any of the above days take longer
-* General polish, style part of the page that isnt the canvas element
+* Add extra enemy/item types
 
 ## Bonus Features
-* Multiple levels of increasing difficulty.
+* Increase difficulty of game the longer the player survives
 * Improved visuals
 
