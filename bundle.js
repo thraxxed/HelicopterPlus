@@ -73,23 +73,26 @@
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
+// Load Assets
+
 var renderLoop = setInterval(draw, 10);
 var helicopter = new Image();
 helicopter.src = 'https://i.imgur.com/tuHHozj.gif';
 var background = new Image();
 background.src = 'https://t0.rbxcdn.com/d7ca67278858823d19c95902aa84494c';
+var obstacle = new Image();
+obstacle.src = 'https://donaldcarling.files.wordpress.com/2016/03/blast-harrier-laser-1.png?w=500';
 
 // Initial Variable Declarations
 
 var playerStartX = 50;
 var playerStartY = 50;
-var scrollSpeed = 2;
-var gravity = 1.015;
-var acceleration = -1.04;
-var maxVelocity = 2.45;
+var scrollSpeed = 1.8;
+var gravity = 3;
+var acceleration = -2;
+var maxVelocity = 1.5;
+var minVelocity = -.8;
 
-var safeZoneStart = void 0;
-var safeZoneEnd = void 0;
 var playerX = playerStartX;
 var playerY = playerStartY;
 var velocityY = 1;
@@ -98,7 +101,7 @@ var points = 0;
 var obstacleX = canvas.width;
 var obstacleWidth = 70;
 var obstacleOffset = Math.random() * canvas.height * 1.25;
-var obstacleHeight = canvas.height * 0.7;
+var obstacleHeight = canvas.height * 0.625;
 var gameOver = false;
 
 function setupGame() {
@@ -109,7 +112,8 @@ function setupGame() {
   points = 0;
   obstacleX = canvas.width;
   obstacleWidth = 70;
-  obstacleOffset = 0;
+  obstacleOffset = Math.random() * canvas.height * 1.25;
+  obstacleHeight = canvas.height * 0.625;
   gameOver = false;
 }
 
@@ -123,12 +127,9 @@ function drawPlayer() {
     canAccelerate = true;
   }
   playerY += velocityY;
+  // console.log(velocityY);
   ctx.drawImage(helicopter, playerX, playerY, 50, 31.25);
-  if (playerY > canvas.height + 31.25) {
-    clearInterval(renderLoop);
-    ctx.fillText("GAME OVER", 220, 150);
-    gameOver = true;
-  }
+
   if (playerY < 0) {
     playerY = 0;
     velocityY = 0;
@@ -142,9 +143,12 @@ function drawObstacles() {
   var topPillarStart = -obstacleOffset;
   var topPillarEnd = topPillarStart + obstacleHeight;
   var bottomPillarStart = canvas.height - obstacleOffset + 50;
+  var bottomPillarEnd = canvas.height - obstacleOffset + 50 + obstacleHeight;
 
   ctx.fillRect(obstacleX, topPillarStart, obstacleWidth, obstacleHeight);
+  // ctx.drawImage(obstacle, obstacleX, topPillarStart, obstacleWidth, obstacleHeight)
   ctx.fillRect(obstacleX, bottomPillarStart, obstacleWidth, obstacleHeight);
+  // ctx.drawImage(obstacle, obstacleX, bottomPillarStart, obstacleWidth, obstacleHeight);
   if (obstacleX < -70) {
     obstacleOffset = Math.random() * canvas.height * 1.25;
     obstacleX = canvas.width;
@@ -152,23 +156,44 @@ function drawObstacles() {
   ctx.fill();
   ctx.closePath();
 
-  // Check for collision
-  if (obstacleX > playerX && obstacleX < playerX + 40 && (playerY < topPillarEnd || playerY > bottomPillarStart)) {
+  var xCollision = false;
+  var yCollision = false;
+
+  if (obstacleX + obstacleWidth > playerX && obstacleX < playerX + 31.25) {
+    console.log("danger zone");
+    xCollision = true;
+    if (playerY < topPillarEnd || playerY + 31.25 > bottomPillarStart && playerY < bottomPillarEnd) {
+      if (playerY + 31.25 > bottomPillarStart && playerY < bottomPillarEnd) console.log("yanger zone");
+      yCollision = true;
+    }
+  }
+
+  if (xCollision && yCollision) {
     clearInterval(renderLoop);
     ctx.fillText("GAME OVER", 220, 150);
     gameOver = true;
   }
+  xCollision = false;
+  yCollision = false;
 }
 
 function keyDownHandler(e) {
   if (e.keyCode === 32) {
     e.preventDefault();
-    if (canAccelerate) velocityY += acceleration;
+    if (canAccelerate && velocityY > minVelocity) velocityY += acceleration;
   }
 }
 
 function drawPoints() {
-  ctx.fillText("Distance: " + Math.round(points), 410, 20);
+  ctx.fillText("Score: " + Math.round(points), 410, 20);
+}
+
+function checkGameOver() {
+  if (playerY > canvas.height + 31.25) {
+    clearInterval(renderLoop);
+    ctx.fillText("GAME OVER", 220, 150);
+    gameOver = true;
+  }
 }
 
 function draw() {
@@ -177,7 +202,8 @@ function draw() {
   drawPlayer();
   drawPoints();
   drawObstacles();
-  points += 0.00625;
+  checkGameOver();
+  points += 0.02;
 }
 
 document.addEventListener("keydown", keyDownHandler, false);
