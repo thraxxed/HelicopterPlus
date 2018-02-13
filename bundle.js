@@ -73,97 +73,101 @@
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
+var renderLoop = setInterval(draw, 10);
+var helicopter = new Image();
+helicopter.src = 'https://i.imgur.com/tuHHozj.gif';
+var background = new Image();
+background.src = 'https://t0.rbxcdn.com/d7ca67278858823d19c95902aa84494c';
+
+// Initial Variable Declarations
+
+var playerStartX = 50;
+var playerStartY = 50;
 var scrollSpeed = 2;
+var gravity = 1.015;
+var acceleration = -1.04;
+var maxVelocity = 2.45;
 
-var trackOneStartPos = 100;
-var trackTwoStartPos = 660;
-var trackThreeStartPos = 1700;
+var playerX = playerStartX;
+var playerY = playerStartY;
+var velocityY = 1;
+var canAccelerate = true;
+var points = 0;
+var obstacleX = canvas.width;
+var obstacleWidth = 70;
+var obstacleOffset = 0;
+var gameOver = false;
+obstacleOffset = Math.random() * canvas.height * 1.25;
 
-var trackOneWidth = 350;
-
-var cartX = 120;
-var cartY = 180;
-
-var cartDy = 0;
-
-var midair = false;
-
-var trackHeight = 180;
-
-var pitfallOneTrigger = false;
-var trackTwoTrigger = false;
-
-function drawTrackOne() {
-  ctx.beginPath();
-  ctx.rect(trackOneStartPos -= scrollSpeed, 200, trackOneWidth, 10);
-  if (trackOneStartPos + trackOneWidth < 120 && !pitfallOneTrigger) {
-    pitfallOneTrigger = true;
-    midair = true;
-    trackHeight = 600;
-  }
+function setupGame() {
+  playerX = playerStartX;
+  playerY = playerStartY;
+  velocityY = 1;
+  canAccelerate = true;
+  points = 0;
+  obstacleX = canvas.width;
+  obstacleWidth = 70;
+  obstacleOffset = 0;
+  gameOver = false;
 }
 
-function drawTracks() {
-  console.log(trackHeight);
-  ctx.beginPath();
-  ctx.fillStyle = "#000000";
-  drawTrackOne();
-  // ctx.rect(trackOneStartPos -= scrollSpeed, 200, canvas.width, 20);
-
-  // ctx.rect(trackTwoStartPos -= scrollSpeed, 200, canvas.width*3, 20)
-  if (trackTwoStartPos < 145 && !trackTwoTrigger) {
-    trackTwoTrigger = true;
-    trackHeight = 180;
+function drawPlayer() {
+  if (velocityY < maxVelocity) {
+    velocityY += 0.02;
   }
-  ctx.rect(trackThreeStartPos -= scrollSpeed, 200, canvas.width * 3, 20);
-  ctx.fill();
-  ctx.closePath();
-}
-
-function drawCart() {
-  if (midair) {
-    cartDy += 0.5;
+  if (velocityY < -maxVelocity) {
+    canAccelerate = false;
+  } else {
+    canAccelerate = true;
   }
-  ctx.beginPath();
-  ctx.fillStyle = "FF0000";
-  cartY += cartDy;
-  if (cartY > trackHeight) {
-    midair = false;
-    cartY = 180;
-  }
-
-  ctx.rect(cartX, cartY, 30, 20);
-  ctx.fill();
-  ctx.closePath();
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawCart();
-  drawTracks();
-
-  if (cartY > canvas.height) {
+  playerY += velocityY;
+  ctx.drawImage(helicopter, playerX, playerY, 50, 31.25);
+  if (playerY > canvas.height + 31.25) {
     clearInterval(renderLoop);
     ctx.fillText("GAME OVER", 220, 150);
+    gameOver = true;
+  }
+  if (playerY < 0) {
+    playerY = 0;
+    velocityY = 0;
   }
 }
 
-function jump() {
-  if (!midair) {
-    midair = true;
-    cartDy = -13;
+function drawObstacles() {
+  obstacleX -= scrollSpeed;
+  ctx.fillStyle = "FF0000";
+  ctx.beginPath();
+  ctx.fillRect(obstacleX, 0 - obstacleOffset, obstacleWidth, canvas.height * 0.7);
+  ctx.fillRect(obstacleX, canvas.height - obstacleOffset + 100, obstacleWidth, canvas.height * 0.7);
+  if (obstacleX < -70) {
+    obstacleOffset = Math.random() * canvas.height * 1.25;
+    obstacleX = canvas.width;
   }
+  ctx.fill();
+  ctx.closePath();
 }
 
 function keyDownHandler(e) {
   if (e.keyCode === 32) {
-    jump();
+    e.preventDefault();
+    if (canAccelerate) velocityY += acceleration;
   }
 }
 
-document.addEventListener("keydown", keyDownHandler, false);
+function drawPoints() {
+  ctx.fillText("" + Math.round(points), 450, 20);
+}
 
-var renderLoop = setInterval(draw, 10);
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+  drawPlayer();
+  drawPoints();
+  drawObstacles();
+  points += 0.00625;
+}
+
+document.addEventListener("keydown", keyDownHandler, false);
 
 /***/ })
 /******/ ]);

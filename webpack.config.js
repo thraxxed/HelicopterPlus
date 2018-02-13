@@ -2,7 +2,8 @@
 var path = require('path');
 
 module.exports = {
-  entry: './game.js',
+  // entry: './game.js',
+  entry: './helicopter.js',
   output: {
     filename: './bundle.js',
   },
