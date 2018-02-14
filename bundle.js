@@ -129,7 +129,10 @@ var projectileY = beeY;
 // Powerups
 var POWERUP_START = canvas.width + 100;
 var powerUpX = POWERUP_START;
-var powerupY = 200;
+var powerUpY = 200;
+
+var playerHasShield = false;
+var playerInvulnerable = false;
 
 var points = 0;
 var gameOver = false;
@@ -145,6 +148,9 @@ function drawPlayer() {
     canAccelerate = true;
   }
   playerY += velocityY;
+  if (playerHasShield) {
+    ctx.drawImage(shield, playerX, playerY - 6.375, 50, 50);
+  }
   ctx.drawImage(helicopter, playerX, playerY, 50, 31.25);
 
   if (playerY < 0) {
@@ -184,10 +190,11 @@ function drawObstacles() {
   }
 
   if (xCollision && yCollision) {
-    clearInterval(renderLoop);
-    ctx.drawImage(dead, playerX, playerY, 50, 31.25);
     gameOverFn();
-    gameOver = true;
+    // clearInterval(renderLoop);
+    // ctx.drawImage(dead, playerX, playerY, 50, 31.25);
+
+    // gameOver = true;
   }
   xCollision = false;
   yCollision = false;
@@ -213,9 +220,9 @@ function drawProjectile() {
   ctx.drawImage(projectile, projectileX, projectileY, 55, 20);
 
   // Check for Collision
-  if (projectileX < playerX + 50 && projectileX + 55 > playerX) {
+  if (projectileX < playerX + 40 && projectileX + 45 > playerX) {
     // X Collision
-    if (projectileY > playerY && projectileY < playerY + 31.25) {
+    if (projectileY > playerY && projectileY < playerY + 20) {
       console.log("yes");
       gameOverFn();
     }
@@ -228,6 +235,14 @@ function shootProjectile() {
 }
 
 function gameOverFn() {
+  if (playerHasShield) {
+    playerHasShield = false;
+    playerInvulnerable = true;
+    setTimeout(function () {
+      return playerInvulnerable = false;
+    }, 1000);
+  }
+  if (playerInvulnerable) return;
   ctx.font = "58px Comic Sans";
   ctx.fillStyle = 'red';
   ctx.fillText("GAME OVER", 120, 150);
@@ -319,11 +334,20 @@ function spawnPowerUp() {
 
 function drawPowerUp() {
   drawShield();
+  console.log(playerHasShield);
 }
 
 function drawShield() {
   powerUpX -= scrollSpeed;
-  ctx.drawImage(shield, powerUpX, powerupY, 75, 75);
+  ctx.drawImage(shield, powerUpX, powerUpY, 50, 50);
+  // Check for collision with player
+  if (powerUpX < playerX + 50 && powerUpX + 50 > playerX) {
+    // X Collision
+    if (powerUpY > playerY && powerUpY < playerY + 50) {
+      playerHasShield = true;
+      powerUpX = -200;
+    }
+  }
 }
 
 startGame();
