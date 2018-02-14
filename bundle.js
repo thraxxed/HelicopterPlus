@@ -89,6 +89,9 @@ projectile.src = 'https://i.imgur.com/5nb5yVw.png?1';
 var dead = new Image();
 dead.src = 'https://i.imgur.com/qzTNUVS.png';
 
+var shield = new Image();
+shield.src = 'https://i.imgur.com/M7g9Xgt.png';
+
 // Game Setup
 
 var playerStartX = 50;
@@ -98,7 +101,6 @@ var gravity = 200;
 var acceleration = -2.2;
 var maxVelocity = 3;
 var minVelocity = -1.5;
-var beeCooldown = false;
 
 var playerX = playerStartX;
 var playerY = playerStartY;
@@ -112,15 +114,22 @@ var obstacleOffset = Math.random() * canvas.height * 1.25;
 var obstacleHeight = canvas.height * 0.675;
 
 // Bee
-var BEE_START = 0;
+var BEE_START = 100;
 var BEE_END = canvas.height - 50;
 var BEE_X = 250;
 var beeY = BEE_START;
 var beeDy = 1.5;
+var beeCooldown = false;
 
+// Bee Projectile
 var PROJECTILE_START = 245;
 var projectileX = -110;
 var projectileY = beeY;
+
+// Powerups
+var POWERUP_START = canvas.width + 100;
+var powerUpX = POWERUP_START;
+var powerupY = 200;
 
 var points = 0;
 var gameOver = false;
@@ -186,7 +195,7 @@ function drawObstacles() {
 
 function drawBee() {
   beeY += beeDy;
-  if (beeY < BEE_START || beeY > BEE_END) {
+  if (beeY < 0 || beeY > BEE_END) {
     beeDy *= -1;
   }
   if (!beeCooldown && Math.round(beeY) > Math.round(playerY) - 6 && Math.round(beeY) < Math.round(playerY) + 6) {
@@ -200,11 +209,11 @@ function drawBee() {
 }
 
 function drawProjectile() {
-  if (projectileX > -100) projectileX -= scrollSpeed * 1.3;
+  if (projectileX > -100) projectileX -= scrollSpeed * 1.4;
   ctx.drawImage(projectile, projectileX, projectileY, 55, 20);
 
   // Check for Collision
-  if (projectileX < playerX + 50 && projectileX > playerX) {
+  if (projectileX < playerX + 50 && projectileX + 55 > playerX) {
     // X Collision
     if (projectileY > playerY && projectileY < playerY + 31.25) {
       console.log("yes");
@@ -221,9 +230,9 @@ function shootProjectile() {
 function gameOverFn() {
   ctx.font = "58px Comic Sans";
   ctx.fillStyle = 'red';
-  ctx.fillText("GAME OVER", 70, 150);
+  ctx.fillText("GAME OVER", 120, 150);
   ctx.font = "28px Comic Sans";
-  ctx.fillText("Press Space to Try Again", 95, 180);
+  ctx.fillText("Press Space to Try Again", 145, 180);
   ctx.drawImage(dead, playerX, playerY, 50, 31.25);
   clearInterval(renderLoop);
   gameOver = true;
@@ -276,6 +285,13 @@ function draw() {
   drawProjectile();
   drawBee();
   checkGameOver();
+  if (!powerupCooldown) {
+    powerupCooldown = true;
+    setTimeout(function () {
+      return spawnPowerUp();
+    }, 5000);
+  }
+  drawPowerUp();
   points += 0.02;
 }
 
@@ -285,11 +301,29 @@ function startGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
   drawPlayer();
-  ctx.font = "36px Comic Sans";
+  ctx.font = "38px Comic Sans";
   ctx.fillStyle = 'red';
-  ctx.fillText("Welcome to Helicopter+", 70, 150);
-  ctx.font = "32px Comic Sans";
-  ctx.fillText("Press space to accelerate", 85, 210);
+  ctx.fillText("Welcome to Helicopter+", 110, 150);
+  ctx.font = "34px Comic Sans";
+  ctx.fillText("Press space to accelerate", 125, 210);
+}
+
+var powerupCooldown = false;
+
+function spawnPowerUp() {
+  console.log("spawn a random powerup");
+  powerUpX = POWERUP_START;
+  powerupCooldown = false;
+  // drawShield();
+}
+
+function drawPowerUp() {
+  drawShield();
+}
+
+function drawShield() {
+  powerUpX -= scrollSpeed;
+  ctx.drawImage(shield, powerUpX, powerupY, 75, 75);
 }
 
 startGame();
