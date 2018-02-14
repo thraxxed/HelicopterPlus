@@ -2,8 +2,6 @@ let canvas = document.getElementById("myCanvas");
 let ctx = canvas.getContext("2d");
 
 // Load Assets
-
-let renderLoop = setInterval(draw, 10);
 const helicopter = new Image();
 helicopter.src = 'https://i.imgur.com/tuHHozj.gif';
 const background = new Image();
@@ -12,13 +10,10 @@ const obstacle = new Image();
 obstacle.src = 'https://i.imgur.com/kDp3Vxp.png';
 const topObstacle = new Image();
 topObstacle.src = 'https://i.imgur.com/Ai9epP2.png?1';
-
 const bee = new Image();
 bee.src = 'https://vignette.wikia.nocookie.net/donkeykong/images/5/50/Buzz_Artwork_-_Donkey_Kong_Country_3.png/revision/latest?cb=20120311192435';
-
 const projectile = new Image();
 projectile.src = 'https://i.imgur.com/5nb5yVw.png?1';
-
 const dead = new Image();
 dead.src = 'https://i.imgur.com/qzTNUVS.png';
 
@@ -44,17 +39,12 @@ let obstacleWidth = 50;
 let obstacleOffset = (Math.random() * canvas.height * 1.25);
 let obstacleHeight = canvas.height * 0.675;
 
-
-
-
-
-
 // Bee
-const BEE_START = 20;
-const BEE_END = canvas.height - 60;
+const BEE_START = 0;
+const BEE_END = canvas.height - 50;
 const BEE_X = 250;
 let beeY = BEE_START;
-let beeDy = 1;
+let beeDy = 1.5;
 
 const PROJECTILE_START = 245;
 let projectileX = -110;
@@ -130,15 +120,14 @@ function drawBee() {
   }
   if (!beeCooldown && Math.round(beeY) > Math.round(playerY) -6 && Math.round(beeY) < Math.round(playerY) + 6) {
     beeCooldown = true;
-    setTimeout(() => beeCooldown = false, 4000);
+    setTimeout(() => beeCooldown = false, 2000);
     shootProjectile();
   }
-  // console.log(beeCooldown);
   ctx.drawImage(bee, BEE_X, beeY, 50, 50);
 }
 
 function drawProjectile() {
-  if (projectileX > -100) projectileX -= scrollSpeed*1.1;
+  if (projectileX > -100) projectileX -= scrollSpeed*1.3;
   ctx.drawImage(projectile, projectileX, projectileY, 55, 20);
 
   // Check for Collision
@@ -164,10 +153,8 @@ function gameOverFn() {
   ctx.fillText("Press Space to Try Again", 95, 180);
   ctx.drawImage(dead, playerX, playerY, 50, 31.25);
   clearInterval(renderLoop);
-  // gameOverFn();
   gameOver = true;
   gameStarted = false;
-  // draw();
 }
 
 function keyDownHandler(e) {
@@ -204,10 +191,6 @@ function checkGameOver() {
   }
 }
 
-function gameOver() {
-
-}
-
 function draw() {
   if (!gameStarted) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -235,5 +218,6 @@ function startGame() {
 }
 
 startGame();
+let renderLoop = setInterval(draw, 10);
 
 document.addEventListener("keydown", keyDownHandler, false);
