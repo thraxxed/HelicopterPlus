@@ -85,10 +85,13 @@ obstacle.src = 'https://i.imgur.com/kDp3Vxp.png';
 var topObstacle = new Image();
 topObstacle.src = 'https://i.imgur.com/Ai9epP2.png?1';
 
+var bee = new Image();
+bee.src = 'https://vignette.wikia.nocookie.net/donkeykong/images/5/50/Buzz_Artwork_-_Donkey_Kong_Country_3.png/revision/latest?cb=20120311192435';
+
 var dead = new Image();
 dead.src = 'https://i.imgur.com/qzTNUVS.png';
 
-// Initial Variable Declarations
+// Game Setup
 
 var playerStartX = 50;
 var playerStartY = 50;
@@ -102,26 +105,23 @@ var playerX = playerStartX;
 var playerY = playerStartY;
 var velocityY = 1;
 var canAccelerate = true;
-var points = 0;
+
+// Obstacle
 var obstacleX = canvas.width;
 var obstacleWidth = 50;
 var obstacleOffset = Math.random() * canvas.height * 1.25;
 var obstacleHeight = canvas.height * 0.675;
-var gameOver = false;
 
-function setupGame() {
-  console.log("hey");
-  playerX = playerStartX;
-  playerY = playerStartY;
-  velocityY = 1;
-  canAccelerate = true;
-  points = 0;
-  obstacleX = canvas.width;
-  obstacleWidth = 50;
-  obstacleOffset = Math.random() * canvas.height * 1.25;
-  obstacleHeight = canvas.height * 0.675;
-  gameOver = false;
-}
+// Bee
+var BEE_START = 20;
+var BEE_END = canvas.height - 60;
+var BEE_X = 250;
+var beeY = BEE_START;
+var beeDy = 1;
+
+var points = 0;
+var gameOver = false;
+var speedFlag = false;
 
 function drawPlayer() {
   if (velocityY < maxVelocity) {
@@ -133,8 +133,6 @@ function drawPlayer() {
     canAccelerate = true;
   }
   playerY += velocityY;
-  // console.log(velocityY);
-  // console.log(helicopter.src);
   ctx.drawImage(helicopter, playerX, playerY, 50, 31.25);
 
   if (playerY < 0) {
@@ -152,9 +150,7 @@ function drawObstacles() {
   var bottomPillarStart = canvas.height - obstacleOffset + 50;
   var bottomPillarEnd = canvas.height - obstacleOffset + 50 + obstacleHeight;
 
-  // ctx.fillRect(obstacleX, topPillarStart, obstacleWidth, obstacleHeight);
   ctx.drawImage(topObstacle, obstacleX, topPillarStart, obstacleWidth + 20, obstacleHeight);
-  // ctx.fillRect(obstacleX, bottomPillarStart, obstacleWidth, obstacleHeight);
   ctx.drawImage(obstacle, obstacleX, bottomPillarStart, obstacleWidth + 20, obstacleHeight);
   if (obstacleX < -70) {
     obstacleOffset = Math.random() * canvas.height * 1.25;
@@ -185,6 +181,17 @@ function drawObstacles() {
   yCollision = false;
 }
 
+function drawBee() {
+  beeY += beeDy;
+  if (beeY < BEE_START || beeY > BEE_END) {
+    beeDy *= -1;
+  }
+  if (Math.round(beeY) > Math.round(playerY) - 4 && Math.round(beeY) < Math.round(playerY) + 4) {
+    console.log("shoot!");
+  }
+  ctx.drawImage(bee, BEE_X, beeY, 50, 50);
+}
+
 function gameOverFn() {
   ctx.font = "58px Comic Sans";
   ctx.fillStyle = 'red';
@@ -210,16 +217,26 @@ function drawPoints() {
   ctx.font = "18px Comic Sans";
   ctx.fillStyle = 'black';
   ctx.fillText("Score: " + Math.round(points), 380, 20);
+  if (Math.round(points) % 50 === 0 && Math.round(points) !== 0) {
+    if (!speedFlag) {
+      console.log("Speeding up obstacles!");
+      scrollSpeed += 0.05;
+      speedFlag = false;
+    }
+    speedFlag = true;
+  } else {
+    speedFlag = false;
+  }
 }
 
 function checkGameOver() {
-  if (playerY > canvas.height + 31.25) {
+  if (playerY > canvas.height - 10) {
+    console.log("hey");
     ctx.drawImage(dead, playerX, playerY, 50, 31.25);
     clearInterval(renderLoop);
     gameOverFn();
     gameOver = true;
     gameStarted = false;
-    // setupGame();
     draw();
   }
 }
@@ -231,6 +248,7 @@ function draw() {
   drawPlayer();
   drawPoints();
   drawObstacles();
+  drawBee();
   checkGameOver();
   points += 0.02;
 }
