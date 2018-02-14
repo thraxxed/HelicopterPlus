@@ -88,6 +88,9 @@ topObstacle.src = 'https://i.imgur.com/Ai9epP2.png?1';
 var bee = new Image();
 bee.src = 'https://vignette.wikia.nocookie.net/donkeykong/images/5/50/Buzz_Artwork_-_Donkey_Kong_Country_3.png/revision/latest?cb=20120311192435';
 
+var projectile = new Image();
+projectile.src = 'https://i.imgur.com/5nb5yVw.png?1';
+
 var dead = new Image();
 dead.src = 'https://i.imgur.com/qzTNUVS.png';
 
@@ -100,6 +103,7 @@ var gravity = 200;
 var acceleration = -2.2;
 var maxVelocity = 3;
 var minVelocity = -1.5;
+var beeCooldown = false;
 
 var playerX = playerStartX;
 var playerY = playerStartY;
@@ -118,6 +122,10 @@ var BEE_END = canvas.height - 60;
 var BEE_X = 250;
 var beeY = BEE_START;
 var beeDy = 1;
+
+var PROJECTILE_START = 245;
+var projectileX = -110;
+var projectileY = beeY;
 
 var points = 0;
 var gameOver = false;
@@ -186,10 +194,34 @@ function drawBee() {
   if (beeY < BEE_START || beeY > BEE_END) {
     beeDy *= -1;
   }
-  if (Math.round(beeY) > Math.round(playerY) - 4 && Math.round(beeY) < Math.round(playerY) + 4) {
-    console.log("shoot!");
+  if (!beeCooldown && Math.round(beeY) > Math.round(playerY) - 6 && Math.round(beeY) < Math.round(playerY) + 6) {
+    beeCooldown = true;
+    setTimeout(function () {
+      return beeCooldown = false;
+    }, 4000);
+    shootProjectile();
   }
+  // console.log(beeCooldown);
   ctx.drawImage(bee, BEE_X, beeY, 50, 50);
+}
+
+function drawProjectile() {
+  if (projectileX > -100) projectileX -= scrollSpeed * 1.1;
+  ctx.drawImage(projectile, projectileX, projectileY, 55, 20);
+
+  // Check for Collision
+  if (projectileX < playerX + 50 && projectileX > playerX) {
+    // X Collision
+    if (projectileY > playerY && projectileY < playerY + 31.25) {
+      console.log("yes");
+      gameOverFn();
+    }
+  }
+}
+
+function shootProjectile() {
+  projectileX = BEE_X;
+  projectileY = beeY;
 }
 
 function gameOverFn() {
@@ -198,6 +230,12 @@ function gameOverFn() {
   ctx.fillText("GAME OVER", 70, 150);
   ctx.font = "28px Comic Sans";
   ctx.fillText("Press Space to Try Again", 95, 180);
+  ctx.drawImage(dead, playerX, playerY, 50, 31.25);
+  clearInterval(renderLoop);
+  // gameOverFn();
+  gameOver = true;
+  gameStarted = false;
+  // draw();
 }
 
 function keyDownHandler(e) {
@@ -232,14 +270,11 @@ function drawPoints() {
 function checkGameOver() {
   if (playerY > canvas.height - 10) {
     console.log("hey");
-    ctx.drawImage(dead, playerX, playerY, 50, 31.25);
-    clearInterval(renderLoop);
     gameOverFn();
-    gameOver = true;
-    gameStarted = false;
-    draw();
   }
 }
+
+function gameOver() {}
 
 function draw() {
   if (!gameStarted) return;
@@ -248,6 +283,7 @@ function draw() {
   drawPlayer();
   drawPoints();
   drawObstacles();
+  drawProjectile();
   drawBee();
   checkGameOver();
   points += 0.02;

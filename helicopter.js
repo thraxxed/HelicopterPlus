@@ -16,6 +16,9 @@ topObstacle.src = 'https://i.imgur.com/Ai9epP2.png?1';
 const bee = new Image();
 bee.src = 'https://vignette.wikia.nocookie.net/donkeykong/images/5/50/Buzz_Artwork_-_Donkey_Kong_Country_3.png/revision/latest?cb=20120311192435';
 
+const projectile = new Image();
+projectile.src = 'https://i.imgur.com/5nb5yVw.png?1';
+
 const dead = new Image();
 dead.src = 'https://i.imgur.com/qzTNUVS.png';
 
@@ -28,6 +31,7 @@ const gravity = 200;
 const acceleration = -2.2;
 const maxVelocity = 3;
 const minVelocity = -1.5;
+let beeCooldown = false;
 
 let playerX = playerStartX;
 let playerY = playerStartY;
@@ -41,12 +45,20 @@ let obstacleOffset = (Math.random() * canvas.height * 1.25);
 let obstacleHeight = canvas.height * 0.675;
 
 
+
+
+
+
 // Bee
 const BEE_START = 20;
 const BEE_END = canvas.height - 60;
 const BEE_X = 250;
 let beeY = BEE_START;
 let beeDy = 1;
+
+const PROJECTILE_START = 245;
+let projectileX = -110;
+let projectileY = beeY;
 
 let points = 0;
 let gameOver = false;
@@ -116,10 +128,32 @@ function drawBee() {
   if (beeY < BEE_START || beeY > BEE_END) {
     beeDy *= -1;
   }
-  if (Math.round(beeY) > Math.round(playerY) -4 && Math.round(beeY) < Math.round(playerY) + 4) {
-    console.log("shoot!");
+  if (!beeCooldown && Math.round(beeY) > Math.round(playerY) -6 && Math.round(beeY) < Math.round(playerY) + 6) {
+    beeCooldown = true;
+    setTimeout(() => beeCooldown = false, 4000);
+    shootProjectile();
   }
+  // console.log(beeCooldown);
   ctx.drawImage(bee, BEE_X, beeY, 50, 50);
+}
+
+function drawProjectile() {
+  if (projectileX > -100) projectileX -= scrollSpeed*1.1;
+  ctx.drawImage(projectile, projectileX, projectileY, 55, 20);
+
+  // Check for Collision
+  if (projectileX < (playerX + 50) && projectileX > playerX) {
+    // X Collision
+    if (projectileY > playerY && projectileY < playerY + 31.25) {
+      console.log("yes");
+      gameOverFn();
+    }
+  }
+}
+
+function shootProjectile() {
+  projectileX = BEE_X;
+  projectileY = beeY;
 }
 
 function gameOverFn() {
@@ -128,6 +162,12 @@ function gameOverFn() {
   ctx.fillText("GAME OVER", 70, 150);
   ctx.font = "28px Comic Sans"
   ctx.fillText("Press Space to Try Again", 95, 180);
+  ctx.drawImage(dead, playerX, playerY, 50, 31.25);
+  clearInterval(renderLoop);
+  // gameOverFn();
+  gameOver = true;
+  gameStarted = false;
+  // draw();
 }
 
 function keyDownHandler(e) {
@@ -160,13 +200,12 @@ function drawPoints() {
 function checkGameOver() {
   if (playerY > canvas.height - 10) {
     console.log("hey");
-    ctx.drawImage(dead, playerX, playerY, 50, 31.25);
-    clearInterval(renderLoop);
     gameOverFn();
-    gameOver = true;
-    gameStarted = false;
-    draw();
   }
+}
+
+function gameOver() {
+
 }
 
 function draw() {
@@ -176,6 +215,7 @@ function draw() {
   drawPlayer();
   drawPoints();
   drawObstacles();
+  drawProjectile();
   drawBee();
   checkGameOver();
   points += 0.02;
