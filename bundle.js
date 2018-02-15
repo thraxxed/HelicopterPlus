@@ -126,6 +126,12 @@ var beeY = BEE_START;
 var beeDy = 1.5;
 var beeCooldown = false;
 
+var beeDying = false;
+var beeDead = true;
+setTimeout(function () {
+  return beeDead = false;
+}, 20000);
+
 // Bee Projectile
 var PROJECTILE_START = 245;
 var projectileX = -110;
@@ -136,6 +142,10 @@ var POWERUP_START = -100;
 var powerUpX = POWERUP_START;
 var powerUpY = 200;
 
+// Rocket
+var rocketX = -100;
+var rocketY = -100;
+
 // POWER UPS:
 // 0 - shield
 // 1 - money
@@ -144,7 +154,8 @@ var currentItem = 0;
 var playerHasShield = false;
 var playerInvulnerable = false;
 
-var numRockets = 0;
+var numRockets = 10;
+var showRocket = false;
 
 var points = 0;
 var gameOver = false;
@@ -209,6 +220,14 @@ function drawObstacles() {
 }
 
 function drawBee() {
+  if (beeDead) {
+    beeDying = false;
+    return;
+  }
+  if (beeDying) {
+    ctx.drawImage(dead, BEE_X, beeY, 50, 50);
+    return;
+  }
   beeY += beeDy;
   if (beeY < 0 || beeY > BEE_END) {
     beeDy *= -1;
@@ -275,6 +294,9 @@ function keyDownHandler(e) {
   }
   if (e.keyCode === 70 && numRockets > 0) {
     console.log("shoot!");
+    rocketX = playerX + 12;
+    rocketY = playerY + 31.25;
+    showRocket = true;
     numRockets--;
   }
 }
@@ -309,6 +331,7 @@ function draw() {
   drawPlayer();
   drawPoints();
   drawObstacles();
+  if (showRocket) shootRocket();
   drawProjectile();
   drawBee();
 
@@ -397,6 +420,26 @@ function drawRockets() {
       // points += 25;
       numRockets += 2;
       powerUpX = -200;
+    }
+  }
+}
+
+function shootRocket() {
+  rocketX += 5.5;
+  ctx.drawImage(rocket, rocketX, rocketY, 25, 25);
+
+  // Check for collision with bee
+  if (!(beeDying || beeDead) && rocketX < BEE_X + 50 && rocketX + 50 > BEE_X) {
+    // console.log("x collision bee");
+    if (rocketY < beeY + 50 && rocketY > beeY - 50) {
+      console.log("the bee has been struck");
+      beeDying = true;
+      setTimeout(function () {
+        return beeDead = true;
+      }, 500);
+      setTimeout(function () {
+        return beeDead = false;
+      }, 20000);
     }
   }
 }

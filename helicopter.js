@@ -54,6 +54,10 @@ let beeY = BEE_START;
 let beeDy = 1.5;
 let beeCooldown = false;
 
+let beeDying = false;
+let beeDead = true;
+setTimeout(() => beeDead = false, 20000);
+
 // Bee Projectile
 const PROJECTILE_START = 245;
 let projectileX = -110;
@@ -64,6 +68,10 @@ const POWERUP_START = -100;
 let powerUpX = POWERUP_START;
 let powerUpY = 200;
 
+// Rocket
+let rocketX = -100;
+let rocketY = -100;
+
 // POWER UPS:
 // 0 - shield
 // 1 - money
@@ -72,11 +80,13 @@ let currentItem = 0;
 let playerHasShield = false;
 let playerInvulnerable = false;
 
-let numRockets = 0;
+let numRockets = 10;
+let showRocket = false;
 
 let points = 0;
 let gameOver = false;
 let speedFlag = false;
+
 
 function drawPlayer() {
   if (velocityY < maxVelocity) {
@@ -138,6 +148,14 @@ function drawObstacles() {
 }
 
 function drawBee() {
+  if (beeDead) {
+    beeDying = false;
+    return;
+  }
+  if (beeDying) {
+    ctx.drawImage(dead, BEE_X, beeY, 50, 50);
+    return;
+  }
   beeY += beeDy;
   if (beeY < 0 || beeY > BEE_END) {
     beeDy *= -1;
@@ -198,6 +216,9 @@ function keyDownHandler(e) {
   }
   if (e.keyCode === 70 && numRockets > 0) {
     console.log("shoot!");
+    rocketX = playerX + 12;
+    rocketY = playerY + 31.25;
+    showRocket = true;
     numRockets--;
   }
 }
@@ -232,6 +253,7 @@ function draw() {
   drawPlayer();
   drawPoints();
   drawObstacles();
+  if (showRocket) shootRocket();
   drawProjectile();
   drawBee();
 
@@ -322,7 +344,21 @@ function drawRockets() {
   }
 }
 
+function shootRocket() {
+  rocketX += 5.5;
+  ctx.drawImage(rocket, rocketX, rocketY, 25, 25);
 
+  // Check for collision with bee
+  if (!(beeDying || beeDead) && rocketX < (BEE_X + 50) && (rocketX + 50) > BEE_X) {
+    // console.log("x collision bee");
+    if (rocketY < (beeY + 50) && (rocketY > (beeY - 50))) {
+      console.log("the bee has been struck");
+      beeDying = true;
+      setTimeout(() => beeDead = true, 500);
+      setTimeout(() => beeDead = false, 20000);
+    }
+  }
+}
 
 startGame();
 let renderLoop = setInterval(draw, 10);
