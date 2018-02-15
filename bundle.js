@@ -314,10 +314,10 @@ function gameOverFn() {
     }, 1000);
   }
   if (playerInvulnerable) return;
-  ctx.font = "58px Comic Sans";
+  ctx.font = "58px Futura";
   ctx.fillStyle = 'red';
   ctx.fillText("GAME   OVER", 105, 150);
-  ctx.font = "28px Comic Sans";
+  ctx.font = "28px Futura";
   ctx.fillText("Press Space to Try Again", 145, 190);
   ctx.drawImage(dead, playerX, playerY, 50, 31.25);
   clearInterval(renderLoop);
@@ -356,7 +356,7 @@ function keyDownHandler(e) {
 }
 
 function drawPoints() {
-  ctx.font = "18px Comic Sans";
+  ctx.font = "18px Futura";
   ctx.fillStyle = 'black';
   ctx.fillText("Score: " + Math.round(points), 470, 20);
   // draw number of rockets
@@ -407,15 +407,17 @@ function startGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
   drawPlayer();
-  ctx.font = "38px Comic Sans";
+  // ctx.font = "38px Futura"
   ctx.fillStyle = 'black';
-  ctx.fillText("Welcome to Helicopter+", 110, 150);
-  ctx.font = "34px Comic Sans";
-  ctx.fillText("Press space to start", 165, 210);
+  // ctx.fillText("Welcome to Helicopter+", 110, 150);
+  ctx.font = "48px Futura";
+  ctx.fillText("Press space to start", 75, 190);
 }
 
 function spawnPowerUp() {
   powerUpX = canvas.width + 100;
+  powerUpY = Math.random() * canvas.height;
+  if (powerUpY > canvas.height - 50) powerUpY = canvas.height - 50;
   powerupCooldown = false;
   currentItem = Math.trunc(Math.random() * 3);
 }
