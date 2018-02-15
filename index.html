@@ -14,9 +14,17 @@
     <div class="canvas-flex2">
       <h1>Helicopter +<h1>
       <canvas id="myCanvas" width="576" height="384"></canvas>
-      <button id="mute" onClick="document.getElementById('music').muted = !document.getElementById('music').muted;">
-        <span id="mute-text">Mute Audio</span>
-      </button>
+      <div class="flex-row">
+        <button id="mute" onClick="document.getElementById('music').muted = !document.getElementById('music').muted;">
+          <span id="mute-text">Mute Audio</span>
+        </button>
+        <div id="controls">
+          <h2>Controls</h2>
+          <span>Space: Accelerate</span>
+          <br>
+          <span>F: Shoot Rocket</span>
+        </div>
+      </div>
     </div>
 
   </div>

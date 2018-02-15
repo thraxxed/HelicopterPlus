@@ -5,13 +5,13 @@ let ctx = canvas.getContext("2d");
 const helicopter = new Image();
 helicopter.src = 'https://i.imgur.com/tuHHozj.gif';
 const background = new Image();
-background.src = 'https://lc-www-live-s.legocdn.com/r/www/r/catalogs/-/media/catalogs/activities/star%20wars/2016/backgrounds/preview_75136_1440x838.jpg?l.r2=-326277714';
+background.src = 'https://i.imgur.com/SwVtOrz.jpg';
 const obstacle = new Image();
 obstacle.src = 'https://i.imgur.com/kDp3Vxp.png';
 const topObstacle = new Image();
 topObstacle.src = 'https://i.imgur.com/Ai9epP2.png?1';
 const bee = new Image();
-bee.src = 'https://vignette.wikia.nocookie.net/donkeykong/images/5/50/Buzz_Artwork_-_Donkey_Kong_Country_3.png/revision/latest?cb=20120311192435';
+bee.src = 'https://i.imgur.com/5H7neWd.png';
 const projectile = new Image();
 projectile.src = 'https://i.imgur.com/5nb5yVw.png?1';
 const dead = new Image();
@@ -20,7 +20,7 @@ const shield = new Image();
 shield.src = 'https://i.imgur.com/M7g9Xgt.png';
 const money = new Image();
 // money.src = 'https://i.imgur.com/jmN9or2.jpg';
-money.src = 'http://aceofspadeswiki.info/w/images/2/23/Medpack.png';
+money.src = 'https://www.wpclipart.com/money/bills/bills_2/100_dollar_bill_vector.png';
 
 const rocket = new Image();
 rocket.src = 'https://i.imgur.com/uoOPKi4.png';
@@ -134,7 +134,6 @@ function resetGame() {
   // console.log("hey");
 }
 
-
 function drawPlayer() {
   if (velocityY < maxVelocity) {
     velocityY += 0.03;
@@ -220,7 +219,7 @@ function drawProjectile() {
   ctx.drawImage(projectile, projectileX, projectileY, 55, 20);
 
   // Check for Collision
-  if (projectileX < (playerX + 40) && (projectileX + 45) > playerX) {
+  if (projectileX < (playerX + 50) && (projectileX + 50) > playerX) {
     // X Collision
     if (projectileY > playerY && projectileY < playerY + 20) {
       gameOverFn();
@@ -284,7 +283,8 @@ function drawPoints() {
 
   if (Math.round(points) % 50 === 0 && Math.round(points) !== 0) {
     if (!speedFlag) {
-      scrollSpeed += 0.05;
+      console.log("speed up");
+      scrollSpeed += 0.1;
       speedFlag = false;
     }
     speedFlag = true;
@@ -308,12 +308,12 @@ function draw() {
   drawPoints();
   drawObstacles();
   if (showRocket) shootRocket();
-  drawProjectile();
+  if (!beeDead && !beeDying) drawProjectile();
   drawBee();
 
   if (!powerupCooldown) {
     powerupCooldown = true;
-    setTimeout(() => spawnPowerUp(), 15000)
+    setTimeout(() => spawnPowerUp(), 17000)
   }
   drawPowerUp();
   points += 0.02;
@@ -358,7 +358,7 @@ function drawShield() {
 }
 
 function drawMoney() {
-  ctx.drawImage(money, powerUpX, powerUpY, 50, 50);
+  ctx.drawImage(money, powerUpX, powerUpY, 50, 40);
   // Check for collision with player
   if (powerUpX < (playerX + 50) && (powerUpX + 50) > playerX) {
     // X Collision
@@ -389,8 +389,8 @@ function shootRocket() {
   ctx.drawImage(rocket, rocketX, rocketY, 25, 25);
 
   // Check for collision with bee
-  if (!(beeDying || beeDead) && rocketX < (BEE_X + 50) && (rocketX + 50) > BEE_X) {
-    if (rocketY < (beeY + 50) && (rocketY > (beeY - 50))) {
+  if (!(beeDying || beeDead) && rocketX < (BEE_X + 50) && (rocketX + 20) > BEE_X) {
+    if (rocketY < (beeY + 50) && (rocketY > (beeY - 10))) {
       points += 50;
       beeDying = true;
       setTimeout(() => beeDead = true, 500);
