@@ -88,9 +88,14 @@ var projectile = new Image();
 projectile.src = 'https://i.imgur.com/5nb5yVw.png?1';
 var dead = new Image();
 dead.src = 'https://i.imgur.com/qzTNUVS.png';
-
 var shield = new Image();
 shield.src = 'https://i.imgur.com/M7g9Xgt.png';
+var money = new Image();
+// money.src = 'https://i.imgur.com/jmN9or2.jpg';
+money.src = 'http://aceofspadeswiki.info/w/images/2/23/Medpack.png';
+
+var rocket = new Image();
+rocket.src = 'https://i.imgur.com/uoOPKi4.png';
 
 // Game Setup
 
@@ -127,12 +132,19 @@ var projectileX = -110;
 var projectileY = beeY;
 
 // Powerups
-var POWERUP_START = canvas.width + 100;
+var POWERUP_START = -100;
 var powerUpX = POWERUP_START;
 var powerUpY = 200;
 
+// POWER UPS:
+// 0 - shield
+// 1 - money
+var currentItem = 0;
+
 var playerHasShield = false;
 var playerInvulnerable = false;
+
+var numRockets = 0;
 
 var points = 0;
 var gameOver = false;
@@ -191,10 +203,6 @@ function drawObstacles() {
 
   if (xCollision && yCollision) {
     gameOverFn();
-    // clearInterval(renderLoop);
-    // ctx.drawImage(dead, playerX, playerY, 50, 31.25);
-
-    // gameOver = true;
   }
   xCollision = false;
   yCollision = false;
@@ -223,7 +231,7 @@ function drawProjectile() {
   if (projectileX < playerX + 40 && projectileX + 45 > playerX) {
     // X Collision
     if (projectileY > playerY && projectileY < playerY + 20) {
-      console.log("yes");
+      // console.log("yes");
       gameOverFn();
     }
   }
@@ -265,6 +273,10 @@ function keyDownHandler(e) {
     e.preventDefault();
     if (canAccelerate && velocityY > minVelocity) velocityY += acceleration;
   }
+  if (e.keyCode === 70 && numRockets > 0) {
+    console.log("shoot!");
+    numRockets--;
+  }
 }
 
 function drawPoints() {
@@ -273,7 +285,7 @@ function drawPoints() {
   ctx.fillText("Score: " + Math.round(points), 380, 20);
   if (Math.round(points) % 50 === 0 && Math.round(points) !== 0) {
     if (!speedFlag) {
-      console.log("Speeding up obstacles!");
+      // console.log("Speeding up obstacles!");
       scrollSpeed += 0.05;
       speedFlag = false;
     }
@@ -299,7 +311,7 @@ function draw() {
   drawObstacles();
   drawProjectile();
   drawBee();
-  checkGameOver();
+
   if (!powerupCooldown) {
     powerupCooldown = true;
     setTimeout(function () {
@@ -308,6 +320,7 @@ function draw() {
   }
   drawPowerUp();
   points += 0.02;
+  checkGameOver();
 }
 
 var gameStarted = false;
@@ -326,25 +339,63 @@ function startGame() {
 var powerupCooldown = false;
 
 function spawnPowerUp() {
-  console.log("spawn a random powerup");
-  powerUpX = POWERUP_START;
+  // console.log("spawn a random powerup");
+  powerUpX = canvas.width + 100;
   powerupCooldown = false;
-  // drawShield();
+  currentItem = Math.trunc(Math.random() * 3);
+  console.log(currentItem);
 }
 
 function drawPowerUp() {
-  drawShield();
-  console.log(playerHasShield);
+  powerUpX -= scrollSpeed;
+  if (currentItem === 0) drawShield();
+  if (currentItem === 1) drawMoney();
+  if (currentItem === 2) drawRockets();
 }
 
 function drawShield() {
-  powerUpX -= scrollSpeed;
+  // console.log("hey");
   ctx.drawImage(shield, powerUpX, powerUpY, 50, 50);
   // Check for collision with player
   if (powerUpX < playerX + 50 && powerUpX + 50 > playerX) {
+    // console.log("x collision");
     // X Collision
-    if (powerUpY > playerY && powerUpY < playerY + 50) {
+    if (powerUpY < playerY + 31.25 && powerUpY > playerY - 31.25) {
+      // Y Collision
       playerHasShield = true;
+      powerUpX = -200;
+    }
+  }
+}
+
+function drawMoney() {
+  // console.log("hey");
+  ctx.drawImage(money, powerUpX, powerUpY, 50, 50);
+  // Check for collision with player
+  if (powerUpX < playerX + 50 && powerUpX + 50 > playerX) {
+    // X Collision
+    if (powerUpY < playerY + 31.25 && powerUpY > playerY - 31.25) {
+      // console.log("yCollision");
+      // Y Collision
+      // playerHasShield = true;
+      points += 25;
+      powerUpX = -200;
+    }
+  }
+}
+
+function drawRockets() {
+  // console.log("hey");
+  ctx.drawImage(rocket, powerUpX, powerUpY, 50, 50);
+  // Check for collision with player
+  if (powerUpX < playerX + 50 && powerUpX + 50 > playerX) {
+    // X Collision
+    if (powerUpY < playerY + 31.25 && powerUpY > playerY - 31.25) {
+      // console.log("yCollision");
+      // Y Collision
+      // playerHasShield = true;
+      // points += 25;
+      numRockets += 2;
       powerUpX = -200;
     }
   }
