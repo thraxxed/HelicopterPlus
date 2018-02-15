@@ -27,6 +27,8 @@ rocket.src = 'https://i.imgur.com/uoOPKi4.png';
 
 // Game Setup
 
+let gameStarted = false;
+
 const playerStartX = 50;
 const playerStartY = 50;
 let scrollSpeed = 1.8;
@@ -56,7 +58,6 @@ let beeCooldown = false;
 
 let beeDying = false;
 let beeDead = true;
-setTimeout(() => beeDead = false, 20000);
 
 // Bee Projectile
 const PROJECTILE_START = 245;
@@ -79,13 +80,59 @@ let currentItem = 0;
 
 let playerHasShield = false;
 let playerInvulnerable = false;
+let powerupCooldown = false;
 
-let numRockets = 10;
+let numRockets = 0;
 let showRocket = false;
 
 let points = 0;
 let gameOver = false;
 let speedFlag = false;
+
+let renderLoop = setInterval(draw, 10);
+
+function resetGame() {
+  gameStarted = false;
+  scrollSpeed = 1.8;
+  playerX = playerStartX;
+  playerY = playerStartY;
+  velocityY = 1;
+  canAccelerate = true;
+  // Obstacle
+  obstacleX = canvas.width;
+  obstacleWidth = 50;
+  obstacleOffset = (Math.random() * canvas.height * 1.25);
+  obstacleHeight = canvas.height * 0.675;
+  // Bee
+  beeY = BEE_START;
+  beeDy = 1.5;
+  beeCooldown = false;
+  beeDying = false;
+  beeDead = true;
+  // Bee Projectile
+  projectileX = -110;
+  projectileY = beeY;
+  // Powerups
+  powerUpX = POWERUP_START;
+  powerUpY = 200;
+  // Rocket
+  rocketX = -100;
+  rocketY = -100;
+  // POWER UPS:
+  // 0 - shield
+  // 1 - money
+  currentItem = 0;
+  playerHasShield = false;
+  playerInvulnerable = false;
+  powerupCooldown = false;
+  numRockets = 0;
+  showRocket = false;
+  points = 0;
+  gameOver = false;
+  speedFlag = false;
+  let renderLoop = setInterval(draw, 10);
+  // console.log("hey");
+}
 
 
 function drawPlayer() {
@@ -176,7 +223,6 @@ function drawProjectile() {
   if (projectileX < (playerX + 40) && (projectileX + 45) > playerX) {
     // X Collision
     if (projectileY > playerY && projectileY < playerY + 20) {
-      // console.log("yes");
       gameOverFn();
     }
   }
@@ -207,15 +253,20 @@ function gameOverFn() {
 
 function keyDownHandler(e) {
   if (e.keyCode === 32) {
-    if (!gameStarted) gameStarted = true;
+    if (!gameStarted) {
+      gameStarted = true;
+      setTimeout(() => beeDead = false, 20000);
+    }
     if (gameOver) {
       setTimeout (() => location.reload(true), 1000);
+      // gameOver = false;
+      // gameStarted = false;
+      // setTimeout (() => resetGame(), 1000);
     }
     e.preventDefault();
     if (canAccelerate && velocityY > minVelocity) velocityY += acceleration;
   }
   if (e.keyCode === 70 && numRockets > 0) {
-    console.log("shoot!");
     rocketX = playerX + 12;
     rocketY = playerY + 31.25;
     showRocket = true;
@@ -224,12 +275,15 @@ function keyDownHandler(e) {
 }
 
 function drawPoints() {
-  ctx.font = "18px Comic Sans"
+  ctx.font = "18px Comic Sans";
   ctx.fillStyle = 'black';
-  ctx.fillText(`Score: ${Math.round(points)}`, 380, 20);
+  ctx.fillText(`Score: ${Math.round(points)}`, 470, 20);
+  // draw number of rockets
+
+  ctx.fillText(`Rockets: ${numRockets}`, 380, 20);
+
   if (Math.round(points) % 50 === 0 && Math.round(points) !== 0) {
     if (!speedFlag) {
-      // console.log("Speeding up obstacles!");
       scrollSpeed += 0.05;
       speedFlag = false;
     }
@@ -237,11 +291,11 @@ function drawPoints() {
   } else {
     speedFlag = false;
   }
+
 }
 
 function checkGameOver() {
   if (playerY > canvas.height - 10) {
-    console.log("hey");
     gameOverFn();
   }
 }
@@ -259,34 +313,28 @@ function draw() {
 
   if (!powerupCooldown) {
     powerupCooldown = true;
-    setTimeout(() => spawnPowerUp(), 5000)
+    setTimeout(() => spawnPowerUp(), 15000)
   }
   drawPowerUp();
   points += 0.02;
   checkGameOver();
 }
 
-let gameStarted = false;
-
 function startGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
   drawPlayer();
   ctx.font = "38px Comic Sans"
-  ctx.fillStyle = 'red';
+  ctx.fillStyle = 'black';
   ctx.fillText("Welcome to Helicopter+", 110, 150);
   ctx.font = "34px Comic Sans";
   ctx.fillText("Press space to accelerate", 125, 210);
 }
 
-let powerupCooldown = false;
-
 function spawnPowerUp() {
-  // console.log("spawn a random powerup");
   powerUpX = canvas.width+100;
   powerupCooldown = false;
   currentItem = Math.trunc(Math.random() * 3);
-  console.log(currentItem);
 }
 
 function drawPowerUp() {
@@ -297,11 +345,9 @@ function drawPowerUp() {
 }
 
 function drawShield() {
-  // console.log("hey");
   ctx.drawImage(shield, powerUpX, powerUpY, 50, 50);
   // Check for collision with player
   if (powerUpX < (playerX + 50) && (powerUpX + 50) > playerX) {
-    // console.log("x collision");
     // X Collision
     if (powerUpY < (playerY + 31.25) && (powerUpY > (playerY - 31.25))) {
       // Y Collision
@@ -312,15 +358,12 @@ function drawShield() {
 }
 
 function drawMoney() {
-  // console.log("hey");
   ctx.drawImage(money, powerUpX, powerUpY, 50, 50);
   // Check for collision with player
   if (powerUpX < (playerX + 50) && (powerUpX + 50) > playerX) {
     // X Collision
     if (powerUpY < (playerY + 31.25) && (powerUpY > (playerY - 31.25))) {
-      // console.log("yCollision");
       // Y Collision
-      // playerHasShield = true;
       points += 25;
       powerUpX = -200;
     }
@@ -335,7 +378,7 @@ function drawRockets() {
     // X Collision
     if (powerUpY < (playerY + 31.25) && (powerUpY > (playerY - 31.25))) {
       // console.log("yCollision");
-      numRockets += 2;
+      numRockets = 2;
       powerUpX = -200;
     }
   }
@@ -347,9 +390,7 @@ function shootRocket() {
 
   // Check for collision with bee
   if (!(beeDying || beeDead) && rocketX < (BEE_X + 50) && (rocketX + 50) > BEE_X) {
-    // console.log("x collision bee");
     if (rocketY < (beeY + 50) && (rocketY > (beeY - 50))) {
-      console.log("the bee has been struck");
       points += 50;
       beeDying = true;
       setTimeout(() => beeDead = true, 500);
@@ -359,6 +400,5 @@ function shootRocket() {
 }
 
 startGame();
-let renderLoop = setInterval(draw, 10);
 
 document.addEventListener("keydown", keyDownHandler, false);
