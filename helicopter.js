@@ -241,13 +241,14 @@ function gameOverFn() {
   if (playerInvulnerable) return;
   ctx.font = "58px Comic Sans"
   ctx.fillStyle = 'red';
-  ctx.fillText("GAME OVER", 120, 150);
+  ctx.fillText("GAME   OVER", 105, 150);
   ctx.font = "28px Comic Sans"
-  ctx.fillText("Press Space to Try Again", 145, 180);
+  ctx.fillText("Press Space to Try Again", 145, 190);
   ctx.drawImage(dead, playerX, playerY, 50, 31.25);
   clearInterval(renderLoop);
   gameOver = true;
   gameStarted = false;
+  document.getElementById('explosion').play();
 }
 
 function keyDownHandler(e) {
@@ -258,18 +259,20 @@ function keyDownHandler(e) {
     }
     if (gameOver) {
       setTimeout (() => location.reload(true), 1000);
-      // gameOver = false;
-      // gameStarted = false;
-      // setTimeout (() => resetGame(), 1000);
     }
     e.preventDefault();
     if (canAccelerate && velocityY > minVelocity) velocityY += acceleration;
   }
-  if (e.keyCode === 70 && numRockets > 0) {
-    rocketX = playerX + 12;
-    rocketY = playerY + 31.25;
-    showRocket = true;
-    numRockets--;
+  if (e.keyCode === 70) {
+    if (numRockets > 0) {
+      rocketX = playerX + 12;
+      rocketY = playerY + 31.25;
+      showRocket = true;
+      numRockets--;
+      document.getElementById('shoot').play();
+    } else {
+      document.getElementById('error').play();
+    }
   }
 }
 
@@ -328,7 +331,7 @@ function startGame() {
   ctx.fillStyle = 'black';
   ctx.fillText("Welcome to Helicopter+", 110, 150);
   ctx.font = "34px Comic Sans";
-  ctx.fillText("Press space to accelerate", 125, 210);
+  ctx.fillText("Press space to start", 165, 210);
 }
 
 function spawnPowerUp() {
@@ -353,12 +356,13 @@ function drawShield() {
       // Y Collision
       playerHasShield = true;
       powerUpX = -200;
+      document.getElementById('shield').play();
     }
   }
 }
 
 function drawMoney() {
-  ctx.drawImage(money, powerUpX, powerUpY, 50, 40);
+  ctx.drawImage(money, powerUpX, powerUpY, 60, 34);
   // Check for collision with player
   if (powerUpX < (playerX + 50) && (powerUpX + 50) > playerX) {
     // X Collision
@@ -366,6 +370,7 @@ function drawMoney() {
       // Y Collision
       points += 25;
       powerUpX = -200;
+      document.getElementById('cashmoney').play();
     }
   }
 }
@@ -380,6 +385,7 @@ function drawRockets() {
       // console.log("yCollision");
       numRockets = 2;
       powerUpX = -200;
+      document.getElementById('reload').play();
     }
   }
 }
@@ -395,6 +401,7 @@ function shootRocket() {
       beeDying = true;
       setTimeout(() => beeDead = true, 500);
       setTimeout(() => beeDead = false, 20000);
+      document.getElementById('explosion').play();
     }
   }
 }
