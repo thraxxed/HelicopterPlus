@@ -415,9 +415,6 @@ function drawRockets() {
     // X Collision
     if (powerUpY < playerY + 31.25 && powerUpY > playerY - 31.25) {
       // console.log("yCollision");
-      // Y Collision
-      // playerHasShield = true;
-      // points += 25;
       numRockets += 2;
       powerUpX = -200;
     }
@@ -433,6 +430,7 @@ function shootRocket() {
     // console.log("x collision bee");
     if (rocketY < beeY + 50 && rocketY > beeY - 50) {
       console.log("the bee has been struck");
+      points += 50;
       beeDying = true;
       setTimeout(function () {
         return beeDead = true;
