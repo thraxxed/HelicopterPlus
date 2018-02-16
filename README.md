@@ -1,6 +1,6 @@
 # Helicopter +
 Helicopter Plus is a 2-dimensional sidescrolling game in which the player controls a helicopter, initially in
-free-fall, which may only be moved vertically
+free-fall, which may only be moved vertically.
 
 The player must avoid randomly positioned obstacles and enemies, and may collect items for bonus points, as well as power-ups.
 
@@ -12,15 +12,14 @@ The player must avoid randomly positioned obstacles and enemies, and may collect
 
 ## Features
 * Manuever character with semi-realistic physics.
+* Avoid enemies and obstacles
 * Collect three types of items:
   - Bubble Shields: Invulnerable until hit once
   - $100 Bill: Awards 25 Points
   - Rockets: Gives 2 rockets which may be fired at enemies.  If they are hit, you receive points and the enemy retreats temporarily.
-* Avoid enemies and obstacles
 * Accumulate points by surviving longer, and view local high scores
 * Difficulty of game scales the longer the player survives
 * Appropriate sound effects and graphics
-* Collision Detection
 
 ```javascript
 function drawObstacles() {
