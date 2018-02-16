@@ -43,10 +43,8 @@ function drawObstacles() {
   let yCollision = false;
 
   if (obstacleX + obstacleWidth > playerX && obstacleX < playerX + 31.25) {
-    // console.log("danger zone");
     xCollision = true;
     if (playerY < topPillarEnd || (playerY + 31.25 > bottomPillarStart && playerY < bottomPillarEnd)) {
-      // if (playerY + 31.25 > bottomPillarStart && playerY < bottomPillarEnd) console.log("yanger zone");
       yCollision = true;
     }
   }

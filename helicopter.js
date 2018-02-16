@@ -19,7 +19,6 @@ dead.src = 'https://i.imgur.com/qzTNUVS.png';
 const shield = new Image();
 shield.src = 'https://i.imgur.com/M7g9Xgt.png';
 const money = new Image();
-// money.src = 'https://i.imgur.com/jmN9or2.jpg';
 money.src = 'https://www.wpclipart.com/money/bills/bills_2/100_dollar_bill_vector.png';
 
 const rocket = new Image();
@@ -131,7 +130,6 @@ function resetGame() {
   gameOver = false;
   speedFlag = false;
   let renderLoop = setInterval(draw, 10);
-  // console.log("hey");
 }
 
 function drawPlayer() {
@@ -178,10 +176,8 @@ function drawObstacles() {
   let yCollision = false;
 
   if (obstacleX + obstacleWidth > playerX && obstacleX < playerX + 31.25) {
-    // console.log("danger zone");
     xCollision = true;
     if (playerY < topPillarEnd || (playerY + 31.25 > bottomPillarStart && playerY < bottomPillarEnd)) {
-      // if (playerY + 31.25 > bottomPillarStart && playerY < bottomPillarEnd) console.log("yanger zone");
       yCollision = true;
     }
   }
@@ -286,7 +282,7 @@ function drawPoints() {
 
   if (Math.round(points) % 50 === 0 && Math.round(points) !== 0) {
     if (!speedFlag) {
-      console.log("speed up");
+      // Speed up obstacles and bee projectile
       scrollSpeed += 0.1;
       speedFlag = false;
     }
@@ -327,9 +323,7 @@ function startGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
   drawPlayer();
-  // ctx.font = "38px Futura"
   ctx.fillStyle = 'black';
-  // ctx.fillText("Welcome to Helicopter+", 110, 150);
   ctx.font = "48px Futura";
   ctx.fillText("Press space to start", 75, 190);
 }
@@ -378,13 +372,11 @@ function drawMoney() {
 }
 
 function drawRockets() {
-  // console.log("hey");
   ctx.drawImage(rocket, powerUpX, powerUpY, 50, 50);
   // Check for collision with player
   if (powerUpX < (playerX + 50) && (powerUpX + 50) > playerX) {
     // X Collision
     if (powerUpY < (playerY + 31.25) && (powerUpY > (playerY - 31.25))) {
-      // console.log("yCollision");
       numRockets = 2;
       powerUpX = -200;
       document.getElementById('reload').play();
