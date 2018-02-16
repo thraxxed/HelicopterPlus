@@ -1,5 +1,5 @@
-let canvas = document.getElementById("myCanvas");
-let ctx = canvas.getContext("2d");
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
 
 // Load Assets
 const helicopter = new Image();
@@ -237,9 +237,9 @@ function gameOverFn() {
   if (playerInvulnerable) return;
   ctx.font = "58px Futura"
   ctx.fillStyle = 'red';
-  ctx.fillText("GAME   OVER", 105, 150);
+  ctx.fillText("GAME   OVER", 90, 150);
   ctx.font = "28px Futura"
-  ctx.fillText("Press Space to Try Again", 145, 190);
+  ctx.fillText("Press Space to Try Again", 130, 190);
   ctx.drawImage(dead, playerX, playerY, 50, 31.25);
   clearInterval(renderLoop);
   gameOver = true;
@@ -254,20 +254,26 @@ function keyDownHandler(e) {
       setTimeout(() => beeDead = false, 20000);
     }
     if (gameOver) {
-      setTimeout (() => location.reload(true), 1000);
+      setTimeout (() => location.reload(true), 500);
     }
     e.preventDefault();
     if (canAccelerate && velocityY > minVelocity) velocityY += acceleration;
   }
   if (e.keyCode === 70) {
+    // console.log("hey");
     if (numRockets > 0) {
       rocketX = playerX + 12;
       rocketY = playerY + 31.25;
       showRocket = true;
       numRockets--;
+      document.getElementById('shoot').currentTime = 0;
       document.getElementById('shoot').play();
+      document.getElementById('shoot').currentTime = 0;
     } else {
+      document.getElementById('error').currentTime = 0;
       document.getElementById('error').play();
+      document.getElementById('error').currentTime = 0;
+      console.log("hey");
     }
   }
 }
@@ -401,5 +407,17 @@ function shootRocket() {
 }
 
 startGame();
+
+function setVolumes() {
+  document.getElementById('music').volume = 0.1;
+  document.getElementById('explosion').volume = 0.1;
+  document.getElementById('error').volume = 0.1;
+  document.getElementById('cashmoney').volume = 0.1;
+  document.getElementById('shield').volume = 0.1;
+  document.getElementById('reload').volume = 0.1;
+  document.getElementById('shoot').volume = 0.1;
+}
+
+setVolumes();
 
 document.addEventListener("keydown", keyDownHandler, false);
