@@ -17,3 +17,44 @@ The player must avoid randomly positioned obstacles and enemies, and may collect
 * Accumulate points by surviving longer, and view local high scores
 * Difficulty of game scales the longer the player survives
 * Appropriate sound effects and graphics
+* Collision Detection
+
+```javascript
+function drawObstacles() {
+  obstacleX -= scrollSpeed;
+  ctx.fillStyle = "FF0000";
+  ctx.beginPath();
+  let topPillarStart = -obstacleOffset;
+  let topPillarEnd = topPillarStart + obstacleHeight;
+  let bottomPillarStart = canvas.height - obstacleOffset + 50;
+  let bottomPillarEnd = canvas.height - obstacleOffset + 50 + obstacleHeight;
+
+
+  ctx.drawImage(topObstacle, obstacleX, topPillarStart, obstacleWidth+20, obstacleHeight)
+  ctx.drawImage(obstacle, obstacleX, bottomPillarStart, obstacleWidth+20, obstacleHeight);
+  if (obstacleX < -70) {
+    obstacleOffset = (Math.random() * canvas.height * 1.25)
+    obstacleX = canvas.width;
+  }
+  ctx.fill();
+  ctx.closePath();
+
+  let xCollision = false;
+  let yCollision = false;
+
+  if (obstacleX + obstacleWidth > playerX && obstacleX < playerX + 31.25) {
+    // console.log("danger zone");
+    xCollision = true;
+    if (playerY < topPillarEnd || (playerY + 31.25 > bottomPillarStart && playerY < bottomPillarEnd)) {
+      // if (playerY + 31.25 > bottomPillarStart && playerY < bottomPillarEnd) console.log("yanger zone");
+      yCollision = true;
+    }
+  }
+
+  if (xCollision && yCollision) {
+    gameOverFn();
+  }
+  xCollision = false;
+  yCollision = false;
+}
+```
