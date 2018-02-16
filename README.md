@@ -12,7 +12,10 @@ The player must avoid randomly positioned obstacles and enemies, and may collect
 
 ## Features
 * Manuever character with semi-realistic physics.
-* Collect items which reward points or give temporary abilities
+* Collect three types of items:
+  - Bubble Shields: Invulnerable until hit once
+  - $100 Bill: Awards 25 Points
+  - Rockets: Gives 2 rockets which may be fired at enemies.  If they are hit, you receive points and the enemy retreats temporarily.
 * Avoid enemies and obstacles
 * Accumulate points by surviving longer, and view local high scores
 * Difficulty of game scales the longer the player survives
