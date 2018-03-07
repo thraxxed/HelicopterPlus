@@ -21,6 +21,9 @@ The player must avoid randomly positioned obstacles and enemies, and may collect
 * Difficulty of game scales the longer the player survives
 * Appropriate sound effects and graphics
 
+## Code Snippets
+### Drawing Obstacles
+
 ```javascript
 function drawObstacles() {
   obstacleX -= scrollSpeed;
@@ -56,5 +59,24 @@ function drawObstacles() {
   }
   xCollision = false;
   yCollision = false;
+}
+```
+
+### Power-ups
+
+```javascript
+function spawnPowerUp() {
+  powerUpX = canvas.width+100;
+  powerUpY = Math.random() * canvas.height;
+  if (powerUpY > canvas.height - 50) powerUpY = canvas.height - 50;
+  powerupCooldown = false;
+  currentItem = Math.trunc(Math.random() * 3);
+}
+
+function drawPowerUp() {
+  powerUpX -= scrollSpeed;
+  if (currentItem === 0) drawShield();
+  if (currentItem === 1) drawMoney();
+  if (currentItem === 2) drawRockets();
 }
 ```
