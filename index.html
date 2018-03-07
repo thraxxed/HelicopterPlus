@@ -26,6 +26,10 @@
           document.getElementById('shield').muted = !document.getElementById('shield').muted;
           document.getElementById('reload').muted = !document.getElementById('reload').muted;
           document.getElementById('shoot').muted = !document.getElementById('shoot').muted;
+          document.getElementById('mute-text').innerHTML === 'Mute Audio' ?
+          document.getElementById('mute-text').innerHTML = 'Unmute Audio'
+          :
+          document.getElementById('mute-text').innerHTML = 'Mute Audio';
         ">
           <span id="mute-text">Mute Audio</span>
         </button>
